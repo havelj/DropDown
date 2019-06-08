@@ -1,3 +1,4 @@
+package gamePackage;
 
 public class Main {
 	
