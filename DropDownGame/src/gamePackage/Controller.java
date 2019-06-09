@@ -25,7 +25,9 @@ public class Controller {
 	}
 	
 	public void initUI() {
-		createJFrame();		
+		createJFrame();	
+		initializeKeyBindings();
+		instantiateBall();
 		frame.setVisible(true);
 	}
 	
@@ -50,48 +52,56 @@ public class Controller {
 		
 	}
 	
+	public void instantiateBall() {
+		model.setBall(view.getBall());
+	}
+	
 	public void setBallBindings() {
 		//right
 		addKeyBinding(view, KeyEvent.VK_RIGHT, "go right", (evt) -> {
-			System.out.println("ball right pressed");
+			//System.out.println("ball right pressed");
 			model.getBall().setKeyState(KeyState.RIGHT);
+//			System.out.println(model.getBall().getKeyState());
+			model.moveBallAccordingToKeyState();
+			view.updateBallLocation();
+			view.repaint();
 		}, false);
 		
 		addKeyBinding(view, KeyEvent.VK_RIGHT, "go right release", (evt) -> {
-			System.out.println("ball right released");
+			//System.out.println("ball right released");
 			model.getBall().setKeyState(KeyState.STILL);
 		}, true);
 		//left
 		addKeyBinding(view, KeyEvent.VK_LEFT, "go left", (evt) -> {
+			//System.out.println("ball left pressed");
 			model.getBall().setKeyState(KeyState.LEFT);
 		}, false);
 		
 		addKeyBinding(view, KeyEvent.VK_LEFT, "go left release", (evt) -> {
+			//System.out.println("ball left released");
 			model.getBall().setKeyState(KeyState.STILL);
 		}, true);
 		//up
 		addKeyBinding(view, KeyEvent.VK_UP, "go up", (evt) -> {
-			System.out.println("ball up pressed");
+			//System.out.println("ball up pressed");
 			model.getBall().setKeyState(KeyState.UP);
 		}, false);
 		addKeyBinding(view, KeyEvent.VK_UP, "go up release", (evt) -> {
-			System.out.println("ball up released");
+			//System.out.println("ball up released");
 			model.getBall().setKeyState(KeyState.STILL);
 		}, true);
 		//down
 		addKeyBinding(view, KeyEvent.VK_DOWN, "go down", (evt) -> {
+			//System.out.println("ball down pressed");
 			model.getBall().setKeyState(KeyState.DOWN);
 		}, false);
 		addKeyBinding(view, KeyEvent.VK_DOWN, "go down release", (evt) -> {
+			//System.out.println("ball down released");
 			model.getBall().setKeyState(KeyState.STILL);
 		}, true);
 	}
 	
-	public void updateModel() {
-		view.update();
-	}
-	
-	
+
 	
 	public static void addKeyBinding(JComponent comp, int keyCode, String id, ActionListener actionListener, boolean isReleased) {
 		InputMap inputMap = comp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -112,11 +122,12 @@ public class Controller {
 	 * starts our game, initializes the beginning View.
 	 */
 	public void start() {
-		updateModel();
-		try {
-			Thread.sleep(FPS);
-		} catch (Exception e) {
-			e.printStackTrace();
+		while (true) {
+			try {
+				Thread.sleep(FPS);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

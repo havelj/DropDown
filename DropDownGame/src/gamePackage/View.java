@@ -32,9 +32,12 @@ public class View extends JPanel {
 		ballImg = b.getImage();
 	}
 	
-	public void update() {
+	public void updateBallLocation() {
 		this.ballX = ball.getX();
 		this.ballY = ball.getY();
+//		System.out.println("updated");
+//		System.out.println("ball X value: " + ball.getX());
+//		System.out.println("Y: " + ballY);
 	}
 	
 	
@@ -44,5 +47,9 @@ public class View extends JPanel {
 		g.drawImage(background, BORDER, BORDER, getWidth(), getHeight(), this);
 		//ball
 		g.drawImage(ballImg, (int)ballX, (int)ballY, null);
+	}
+	
+	public Ball getBall() {
+		return ball;
 	}
 }

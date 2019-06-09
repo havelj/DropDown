@@ -11,7 +11,7 @@ public class Model {
 	}
 	
 	public void init() {
-		ball = new Ball(Model.GAME_WIDTH, Model.GAME_HEIGHT);
+		
 	}
 	
 	public void moveBallAccordingToKeyState() {

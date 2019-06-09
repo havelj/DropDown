@@ -6,7 +6,7 @@ public class Ball extends GameObject {
 	
 	
 	
-	private int ballSpeed = 10;
+	private int ballSpeed = 5;
 	
 	private KeyState keyState = KeyState.STILL;
 	
@@ -30,6 +30,9 @@ public class Ball extends GameObject {
 	 */
 	public void moveRight() {
 		this.setLocation(this.getX() + ballSpeed, this.getY());
+//		System.out.println("moveRight()");
+//		System.out.println("xPosition: " + xPosition);
+//		System.out.println("yPosition: " + yPosition);
 	}
 	
 	/**
@@ -56,6 +59,7 @@ public class Ball extends GameObject {
 	 */
 	@Override
 	public double getX() {
+//		System.out.println(xPosition);
 		return this.xPosition;
 	}
 
@@ -66,6 +70,7 @@ public class Ball extends GameObject {
 	 */
 	@Override
 	public double getY() {
+		//System.out.println(yPosition);
 		return this.yPosition;
 	}
 	
