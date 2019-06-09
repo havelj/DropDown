@@ -19,10 +19,18 @@ public class View extends JPanel {
 	private double ballX;
 	private double ballY;
 	
+	
+	/**
+	 * Default constructor; method call to load all necessary images.
+	 */
 	public View() {
 		loadImage();
 	}
 	
+	/**
+	 * loadImage()
+	 * Loads all necessary images.
+	 */
 	public void loadImage() {
 		//background
 		ImageIcon bg = new ImageIcon("src/images/Grass and Sky.png");
@@ -32,6 +40,10 @@ public class View extends JPanel {
 		ballImg = b.getImage();
 	}
 	
+	/**
+	 * updateBallLocation()
+	 * updates the View's ball coordinates after the Model changes them. Necessary because the View class needs to repaint() AFTER the model changes coordinates.
+	 */
 	public void updateBallLocation() {
 		this.ballX = ball.getX();
 		this.ballY = ball.getY();

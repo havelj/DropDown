@@ -3,14 +3,14 @@ package gamePackage;
 public class Ball extends GameObject {
 	private double xPosition;
 	private double yPosition;
-	
-	
-	
 	private int ballSpeed = 5;
-	
 	private KeyState keyState = KeyState.STILL;
 	
-	
+	/**
+	 * Ball constructor which gives a ball its starting coordinates coordinates.
+	 * @param startXPosn
+	 * @param startYPosn
+	 */
 	public Ball(double startXPosn, double startYPosn) {
 		xPosition = startXPosn;
 		yPosition = startYPosn;
@@ -95,19 +95,10 @@ public class Ball extends GameObject {
 		ballSpeed = s;
 	}
 	
-	/**
-	 * getFlyState()
-	 * @return FlyState enumeration to represent the current fly state
-	 */
 	public KeyState getKeyState() {
 		return keyState;
 	}
 
-	/**
-	 * setFlyState()
-	 * Sets the FlyState to another enumeration type.
-	 * @param flyState
-	 */
 	public void setKeyState(KeyState state) {
 		this.keyState = state;
 	}
