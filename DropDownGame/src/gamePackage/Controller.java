@@ -3,6 +3,7 @@ package gamePackage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -10,28 +11,26 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
-public class Controller {
+public class Controller implements KeyListener {
 	private JFrame frame;
-	Model model = new Model();
-	View view = new View();
-	private final int FPS = 15;
-	
+	Model model;
+	View view;
+	private final int FPS = 60;
+	private final long targetTime = 1000 / FPS;
 	
 	/**
 	 * Default constructor; calls the Initial User Interface
 	 */
 	public Controller() {
-		initUI();
-	}
-	
-	/**
-	 * initUI()
-	 * Method that creates the Initial User Interface for the game.
-	 */
-	public void initUI() {
-		createJFrame();	
-		initializeKeyBindings();
-		instantiateBall();
+		model = new Model(new Ball(Model.GAME_WIDTH/2, Model.GAME_HEIGHT/2));
+		view = new View();
+		
+		createJFrame();
+		
+		view.setBall(model.getBall());
+		view.updateBallLocation();
+		view.repaint();
+		
 		frame.setVisible(true);
 	}
 	
@@ -47,131 +46,114 @@ public class Controller {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setUndecorated(true);								//Allows decorations to be added to the JFrame
 		frame.setLocationRelativeTo(null);						//centers the window on the screen
-		
+		frame.addKeyListener(this);								//Tells frame to listen to user's input
 		//adds the necessary JPanel (the view) onto the JFrame instance
 		frame.add(view);
 	}
 	
 	/**
-	 * initializeKeyBindings()
-	 * initializes all necessary key bindings for the game. (As of right now, it appears as if we will only need bindings for the ball).
+	 * tick()
+	 * Contains all the logic of the game. Called every iteration of the game loop
 	 */
-	public void initializeKeyBindings() {
-		setBallBindings();
-	}
-	
-	/**
-	 * setBallBindings()
-	 * initializes specifically the key bindings of the ball. This method is called in initializeKeyBindings().
-	 */
-	public void setBallBindings() {
-		//right
-		addKeyBinding(view, KeyEvent.VK_RIGHT, "go right", (evt) -> {
-			//System.out.println("ball right pressed");
-			model.getBall().setKeyState(KeyState.RIGHT);
-//			System.out.println(model.getBall().getKeyState());
-			model.moveBallAccordingToKeyState();
-			view.updateBallLocation();
-			view.repaint();
-		}, false);
+	public void tick() {
+		//Moves the ball left and right
+		if(model.getBall().left) model.getBall().moveLeft();
+		if(model.getBall().right) model.getBall().moveRight(); 
 		
-		addKeyBinding(view, KeyEvent.VK_RIGHT, "go right release", (evt) -> {
-			//System.out.println("ball right released");
-			model.getBall().setKeyState(KeyState.STILL);
-		}, true);
-		//left
-		addKeyBinding(view, KeyEvent.VK_LEFT, "go left", (evt) -> {
-			//System.out.println("ball left pressed");
-			model.getBall().setKeyState(KeyState.LEFT);
-			model.moveBallAccordingToKeyState();
-			view.updateBallLocation();
-			view.repaint();
-		}, false);
-		
-		addKeyBinding(view, KeyEvent.VK_LEFT, "go left release", (evt) -> {
-			//System.out.println("ball left released");
-			model.getBall().setKeyState(KeyState.STILL);
-		}, true);
-		//up
-		addKeyBinding(view, KeyEvent.VK_UP, "go up", (evt) -> {
-			//System.out.println("ball up pressed");
-			model.getBall().setKeyState(KeyState.UP);
-			model.moveBallAccordingToKeyState();
-			view.updateBallLocation();
-			view.repaint();
-		}, false);
-		addKeyBinding(view, KeyEvent.VK_UP, "go up release", (evt) -> {
-			//System.out.println("ball up released");
-			model.getBall().setKeyState(KeyState.STILL);
-		}, true);
-		//down
-		addKeyBinding(view, KeyEvent.VK_DOWN, "go down", (evt) -> {
-			//System.out.println("ball down pressed");
-			model.getBall().setKeyState(KeyState.DOWN);
-			model.moveBallAccordingToKeyState();
-			view.updateBallLocation();
-			view.repaint();
-		}, false);
-		addKeyBinding(view, KeyEvent.VK_DOWN, "go down release", (evt) -> {
-			//System.out.println("ball down released");
-			model.getBall().setKeyState(KeyState.STILL);
-		}, true);
-	}
-	
-	/**
-	 * instantiateBall()
-	 * Sets the ball instance in Model to be the ball instance from View
-	 * 
-	 * Why?
-	 * The Model class keeps track of when to change the ball's data (x and y coordinates). However, the View needs certain information; some of this being the coordinates of the ball (so the
-	 *  View class knows where to draw the ball on screen). Originally before this method was created there was a disconnect between the Model's ball data and the coordinates that the View class
-	 *  has access to; the ball's coordinates would be updated, but the ball's location would not change on screen.
-	 *  
-	 *    IS THERE A MORE MODULAR FIX?
-	 */
-	public void instantiateBall() {
-		model.setBall(view.getBall());
-		view.updateBallLocation();
-		view.repaint();
-	}
-	
-	/**
-	 * addKeyBinding(JComponent comp, int keyCode, String id, ActionListener actionListener, boolean isReleased)
-	 * @param comp				= the specific component we are adding key bindings to
-	 * @param keyCode			= the specific key press we are adding a binding to
-	 * @param id				= A String to specify what the key action will do
-	 * @param actionListener	
-	 * @param isReleased
-	 * 
-	 * The back end to how we will add key bindings
-	 */
-	public static void addKeyBinding(JComponent comp, int keyCode, String id, ActionListener actionListener, boolean isReleased) {
-		InputMap inputMap = comp.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		ActionMap actionMap = comp.getActionMap();
-
-		inputMap.put(KeyStroke.getKeyStroke(keyCode, 0, isReleased), id);
-		actionMap.put(id, new AbstractAction() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				actionListener.actionPerformed(e);
-
+		//Moves the ball up (decelerates)
+		if(model.getBall().jumping) {
+			model.getBall().moveUp();
+			model.getBall().currJumpSpeed -= 0.2; //The bigger the change (.2), the small the jump
+			
+			if(model.getBall().currJumpSpeed <= 0) {
+				model.getBall().currJumpSpeed = model.getBall().jumpSpeed;
+				model.getBall().falling = true;
+				model.getBall().jumping = false;
 			}
-		});
+		}
+		
+		//Moves the ball down (accelerates)
+		if(model.getBall().falling) {
+			model.getBall().moveDown();
+			
+			if(model.getBall().fallSpeed < model.getBall().maxFallSpeed) {
+				model.getBall().fallSpeed += 0.2; //The bigger the change (.2), the faster the acceleration
+			}
+		}
+		
+		if(!model.getBall().falling) {
+			model.getBall().fallSpeed = 0.1;
+		}
 	}
 	
 	/**
 	 * start()
-	 * starts our game, initializes the beginning View.
+	 * starts our game, initializes the beginning View. This is our game loop.
 	 *  *Still needs work*
 	 */
 	public void start() {
-		while (true) {
+		long start, elapsed, wait;
+		while (true) { //One loop == 1 Frame Per Second
+			start = System.nanoTime();
+			
+			tick();
+			view.updateBallLocation();
+			view.repaint();
+			
+			elapsed = System.nanoTime() - start;
+			wait = targetTime - (elapsed / 1000000);
+			
+			if(wait <= 0) wait = 5;
+			
 			try {
-				Thread.sleep(FPS);
+				Thread.sleep(wait); //Pauses if loop is finished running before desired FPS
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	/**
+	 * keyTyped(KeyEvent e)
+	 * Invoked when a key is typed
+	 * Not needed but we must include because of interface
+	 */
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub	
+	}
+
+	/**
+	 * keyPressed(KeyEvent e)
+	 * Invoked when user presses on a key
+	 * Sets the Ball's left and right properties accordingly
+	 */
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int key = e.getKeyCode();
+		if(key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) model.getBall().left = true;
+		if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) model.getBall().right = true; 
+		if(key == KeyEvent.VK_UP || key == KeyEvent.VK_W) { 
+			model.getBall().jumping = true;
+			
+			/* 
+			 * This allows the ball to jump while it's falling.
+			 * We don't want this feature in the final game.
+			 * Testing purposes only!
+			 */
+			model.getBall().falling = false;
+		} 
+	}
+
+	/**
+	 * keyReleased(KeyEvent e)
+	 * Invoked when user releases a key
+	 * Sets the Ball's left and right properties accordingly
+	 */
+	@Override
+	public void keyReleased(KeyEvent e) {
+		int key = e.getKeyCode();
+		if(key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) model.getBall().left = false;
+		if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) model.getBall().right = false; 
 	}
 }

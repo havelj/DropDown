@@ -1,6 +1,6 @@
 package gamePackage;
 
-public enum KeyState {
+public enum KeyState { //Don't need
 	UP("up"),
 	DOWN("down"),
 	RIGHT("right"),

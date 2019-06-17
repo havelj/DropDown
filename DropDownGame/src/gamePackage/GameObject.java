@@ -3,7 +3,7 @@ package gamePackage;
 import java.awt.geom.Point2D;
 
 public abstract class GameObject extends Point2D {
-	
+	//Prob don't need Point2D ????
 	@Override
 	public abstract double getX();
 
@@ -13,7 +13,7 @@ public abstract class GameObject extends Point2D {
 	@Override
 	public abstract void setLocation(double x, double y);
 	
-	public abstract int getSpeed();
+	public abstract double getSpeed();
 	
 	public abstract void setSpeed(int s);
 }

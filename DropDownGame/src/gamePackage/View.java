@@ -15,7 +15,7 @@ public class View extends JPanel {
 	private Image background;
 	private Image ballImg;
 	
-	private Ball ball = new Ball(Model.GAME_WIDTH/2, Model.GAME_HEIGHT/2);
+	private Ball ball;
 	private double ballX;
 	private double ballY;
 	
@@ -61,7 +61,7 @@ public class View extends JPanel {
 		g.drawImage(ballImg, (int)ballX, (int)ballY, null);
 	}
 	
-	public Ball getBall() {
-		return ball;
+	public Ball setBall(Ball b) {
+		return ball = b;
 	}
 }
