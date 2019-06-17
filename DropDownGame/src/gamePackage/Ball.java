@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 public class Ball extends GameObject {
 	private double xPosition;
 	private double yPosition;
+	private double ballDiameter = 30;
 	
 	public double horSpeed = 5;
 	public double jumpSpeed = 5;
@@ -34,6 +35,7 @@ public class Ball extends GameObject {
 	 */
 	public void moveLeft() {
 		xPosition -= horSpeed;
+		checkBoundaries();
 	}
 	
 	/**
@@ -42,6 +44,7 @@ public class Ball extends GameObject {
 	 */
 	public void moveRight() {
 		xPosition += horSpeed;
+		checkBoundaries();
 	}
 	
 	/**
@@ -50,6 +53,7 @@ public class Ball extends GameObject {
 	 */
 	public void moveUp() {
 		yPosition -= currJumpSpeed;
+		checkBoundaries();
 	}
 	
 	/**
@@ -59,8 +63,27 @@ public class Ball extends GameObject {
 	public void moveDown() {
 		//this.setLocation(this.getX(), this.getY() + ballSpeed);
 		yPosition += fallSpeed;
+		checkBoundaries();
 	}
 	
+	/**
+	 * checkBoundaries()
+	 * X and Y coordinate checking to keep ball on screen.
+	 */
+	public void checkBoundaries() {
+		if (xPosition <= 0) {
+			xPosition = 0;
+		}
+		if (xPosition + ballDiameter >= 500) {
+			xPosition = 500 - ballDiameter;
+		}
+		if (yPosition <= 0) {
+			yPosition = 0;
+		}
+		if (yPosition + ballDiameter >= 500) {
+			yPosition = 500 - ballDiameter;
+		}
+	}
 	
 	/**
 	 * getX()

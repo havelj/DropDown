@@ -15,7 +15,7 @@ public class Controller implements KeyListener {
 	private JFrame frame;
 	Model model;
 	View view;
-	private final int FPS = 60;
+	private final int FPS = 120;
 	private final long targetTime = 1000 / FPS;
 	
 	/**
@@ -57,8 +57,12 @@ public class Controller implements KeyListener {
 	 */
 	public void tick() {
 		//Moves the ball left and right
-		if(model.getBall().left) model.getBall().moveLeft();
-		if(model.getBall().right) model.getBall().moveRight(); 
+		if(model.getBall().left) {
+			model.getBall().moveLeft();
+		}
+		if(model.getBall().right) { 
+			model.getBall().moveRight();
+		}
 		
 		//Moves the ball up (decelerates)
 		if(model.getBall().jumping) {
@@ -84,6 +88,7 @@ public class Controller implements KeyListener {
 		if(!model.getBall().falling) {
 			model.getBall().fallSpeed = 0.1;
 		}
+		
 	}
 	
 	/**
