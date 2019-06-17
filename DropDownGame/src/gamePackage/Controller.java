@@ -15,7 +15,7 @@ public class Controller implements KeyListener {
 	private JFrame frame;
 	Model model;
 	View view;
-	private final int FPS = 120;
+	private final int FPS = 60;
 	private final long targetTime = 1000 / FPS;
 	
 	/**
@@ -26,9 +26,8 @@ public class Controller implements KeyListener {
 		view = new View();
 		
 		createJFrame();
-		
-		view.setBall(model.getBall());
-		view.updateBallLocation();
+		setViewComponents();
+		//view.updateObjectLocation();
 		view.repaint();
 		
 		frame.setVisible(true);
@@ -49,6 +48,14 @@ public class Controller implements KeyListener {
 		frame.addKeyListener(this);								//Tells frame to listen to user's input
 		//adds the necessary JPanel (the view) onto the JFrame instance
 		frame.add(view);
+	}
+	
+	public void setViewComponents() {
+		view.setBall(model.getBall());
+		view.setWallOneLeft(model.getWallFromArr(0));
+		view.setWallOneRight(model.getWallFromArr(1));
+		view.setWallTwoLeft(model.getWallFromArr(2));
+		view.setWallTwoRight(model.getWallFromArr(3));
 	}
 	
 	/**
@@ -89,6 +96,15 @@ public class Controller implements KeyListener {
 			model.getBall().fallSpeed = 0.1;
 		}
 		
+		//Moves the walls up unless a powerup is chosen
+		moveWalls();
+		
+	}
+	
+	public void moveWalls() {
+		for (int i = 0; i < model.getWallArrSize(); i++) {
+			model.getWalls()[i].moveWall();
+		}
 	}
 	
 	/**
@@ -102,7 +118,7 @@ public class Controller implements KeyListener {
 			start = System.nanoTime();
 			
 			tick();
-			view.updateBallLocation();
+			//view.updateObjectLocation();
 			view.repaint();
 			
 			elapsed = System.nanoTime() - start;
