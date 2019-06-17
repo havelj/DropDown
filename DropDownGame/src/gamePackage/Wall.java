@@ -30,9 +30,15 @@ public class Wall extends GameObject {
 		down = false;
 		if (up) {
 			yPosition -= wallSpeed;
+			if (yPosition <= 0) {
+				yPosition = 500;
+			}
 		}
 		if (down) {
 			yPosition += wallSpeed;
+			if (yPosition >= 500) {
+				yPosition = 0 - height;
+			}
 		}
 	}
 	
