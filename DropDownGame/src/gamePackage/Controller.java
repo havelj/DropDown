@@ -63,6 +63,8 @@ public class Controller implements KeyListener {
 	 * Contains all the logic of the game. Called every iteration of the game loop
 	 */
 	public void tick() {
+		Wall wallBelow, wallAbove, wallLeft, wallRight;
+		
 		//Moves the ball left and right
 		if(model.getBall().left) {
 			model.getBall().moveLeft();
@@ -92,6 +94,7 @@ public class Controller implements KeyListener {
 			}
 		}
 		
+		//Resets initial fall speed when ball stops falling
 		if(!model.getBall().falling) {
 			model.getBall().fallSpeed = 0.1;
 		}
@@ -99,12 +102,109 @@ public class Controller implements KeyListener {
 		//Moves the walls up unless a powerup is chosen
 		moveWalls();
 		
+		//Stores wall that the ball is colliding with
+		wallLeft = getWallLeft(model.getBall());
+		wallRight = getWallRight(model.getBall());
+		wallBelow = getWallBelow(model.getBall());
+		wallAbove = getWallAbove(model.getBall());
+		
+		//Force ball location if a collision (with a wall) exists
+		if(model.getBall().right && wallRight != null) {
+			model.getBall().setLocation(wallRight.getX() - 30, model.getBall().getY());
+		} else if(model.getBall().left && wallLeft != null) { 
+			model.getBall().setLocation(wallLeft.getX() + wallLeft.getWidth(), model.getBall().getY());
+		} else if(wallBelow != null) {
+			model.getBall().setLocation(model.getBall().getX(), wallBelow.getY() - 30);
+		} else if(wallAbove != null) {
+			model.getBall().setLocation(model.getBall().getX(), wallAbove.getY() + wallAbove.getHeight());
+		}
+		
 	}
 	
+	/**
+	 * moveWalls()
+	 * Calls moveWall() for every wall in the game
+	 */
 	public void moveWalls() {
 		for (int i = 0; i < model.getWallArrSize(); i++) {
 			model.getWalls()[i].moveWall();
 		}
+	}
+	
+	/**
+	 * getWallBelow(Ball ball)
+	 * Iterates through all of the walls and determines
+	 * whether or not there exists a wall that the ball is sitting on
+	 */
+	public Wall getWallBelow(Ball ball) {
+		Wall myWall = null;
+		Wall temp;
+		for(int i = 0; i < model.getWalls().length; i++) {
+			temp = model.getWalls()[i];
+			//If the ball is sitting on top of the wall
+			if((ball.getY() >= (temp.getY() - ball.getSize())) && (ball.getY() <= (temp.getY() + temp.getHeight() - ball.getSize())) && (ball.getX() >= temp.getX() - ball.getSize()) && (ball.getX() <= temp.getX() + temp.getWidth())) {
+				myWall = temp;
+			}
+		}
+		
+		return myWall;
+	}
+	
+	/**
+	 * getWallAbove(Ball ball) 
+	 * Iterates through all of the walls and determines whether
+	 * or not there exists a wall that the ball is jumping up/into
+	 */
+	public Wall getWallAbove(Ball ball) {
+		Wall myWall = null;
+		Wall temp;
+		for(int i = 0; i < model.getWalls().length; i++) {
+			temp = model.getWalls()[i];
+			//If the ball is hitting the bottom of the wall
+			if((ball.getY() >= (temp.getY() + temp.getHeight()- ball.getSize())) && (ball.getY() <= (temp.getY() + temp.getHeight())) && (ball.getX() >= temp.getX() - ball.getSize()) && (ball.getX() <= temp.getX() + temp.getWidth())) {
+				myWall = temp;
+			}
+		}
+		
+		return myWall;
+	}
+	
+	/**
+	 * getWallRight(Ball ball) 
+	 * Iterates through all of the walls and determines whether 
+	 * or not the ball is trying to move right into one as it's falling
+	 */
+	public Wall getWallRight(Ball ball) {
+		Wall myWall = null;
+		Wall temp;
+		for(int i = 0; i < model.getWalls().length; i++) {
+			temp = model.getWalls()[i];
+			//If the ball is hitting the left side of the wall
+			if((ball.getX() >= temp.getX() - ball.getSize()) && (ball.getX() <= temp.getX() - ball.getSize() + ball.horSpeed) && (ball.getY() >= temp.getY() - ball.getSize()) && (ball.getY() <= temp.getY() + temp.getHeight())) {
+				myWall = temp;
+			}
+		}
+		
+		return myWall;
+	}
+	
+	/**
+	 * getWallLeft(Ball ball)
+	 * Iterates through all of the walls and determines whether
+	 * or not the ball is trying to move left into one as it's falling
+	 */
+	public Wall getWallLeft(Ball ball) {
+		Wall myWall = null;
+		Wall temp;
+		for(int i = 0; i < model.getWalls().length; i++) {
+			temp = model.getWalls()[i];
+			//If the ball is hitting the right side of the wall
+			if((ball.getX() >= temp.getX() + temp.getWidth() - ball.horSpeed) && (ball.getX() <= temp.getX() + temp.getWidth()) && (ball.getY() >= temp.getY() - ball.getSize()) && (ball.getY() <= temp.getY() + temp.getHeight())) {
+				myWall = temp;
+			}
+		}
+		
+		return myWall;
 	}
 	
 	/**
@@ -152,8 +252,12 @@ public class Controller implements KeyListener {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		int key = e.getKeyCode();
-		if(key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) model.getBall().left = true;
-		if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) model.getBall().right = true; 
+		if(key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
+			model.getBall().left = true;
+		}
+		if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
+			model.getBall().right = true; 
+		}
 		if(key == KeyEvent.VK_UP || key == KeyEvent.VK_W) { 
 			model.getBall().jumping = true;
 			
@@ -174,7 +278,11 @@ public class Controller implements KeyListener {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		int key = e.getKeyCode();
-		if(key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) model.getBall().left = false;
-		if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) model.getBall().right = false; 
+		if(key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A) {
+			model.getBall().left = false;
+		}
+		if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D) {
+			model.getBall().right = false; 
+		}
 	}
 }

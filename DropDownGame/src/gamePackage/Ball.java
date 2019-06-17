@@ -27,6 +27,7 @@ public class Ball extends GameObject {
 		left = false;
 		right = false;
 		jumping = false;
+		falling = true;
 	}
 	
 	/**
@@ -77,12 +78,22 @@ public class Ball extends GameObject {
 		if (xPosition + ballDiameter >= 500) {
 			xPosition = 500 - ballDiameter;
 		}
-		if (yPosition <= 0) {
+		/*if (yPosition <= 0) {
 			yPosition = 0;
-		}
+		} */
+		
 		if (yPosition + ballDiameter >= 500) {
 			yPosition = 500 - ballDiameter;
 		}
+	}
+	
+	/**
+	 * getSize()
+	 * Returns the balls diameter
+	 * which is the same as the hitbox's width and height
+	 */
+	public double getSize() {
+		return ballDiameter;
 	}
 	
 	/**
@@ -118,13 +129,23 @@ public class Ball extends GameObject {
 		yPosition = y;
 	}
 	
+	/**
+	 * getSpeed()
+	 * This method overrides the GameObject getSpeed() method.
+	 * It returns the ball's horizontal speed
+	 */
 	@Override
 	public double getSpeed() {
 		return horSpeed;
 	}
 	
+	/**
+	 * setSpeed(double s)
+	 * This method overrides the GameObject setSpeed(double s) method.
+	 * It assigns the ball's horizontal speed to a value passed into the method.
+	 */
 	@Override
-	public void setSpeed(int s) {
+	public void setSpeed(double s) {
 		horSpeed = s;
 	}
 }

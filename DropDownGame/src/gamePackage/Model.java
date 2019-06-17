@@ -8,9 +8,9 @@ public class Model {
 	private Ball ball;
 	
 	//wall attributes to fill array of wall objects
-	private int wallInterval = 70;
+	private int wallInterval = 70; //was 70
 	private int wallGap = 60;
-	private int wallHeight = 30;
+	private int wallHeight = 30; //was 30
 	Random rand = new Random();
 	private int randWallWidth = rand.nextInt(GAME_WIDTH - 40);
 	private int wallStartingY = 275;

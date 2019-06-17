@@ -15,5 +15,5 @@ public abstract class GameObject extends Point2D {
 	
 	public abstract double getSpeed();
 	
-	public abstract void setSpeed(int s);
+	public abstract void setSpeed(double s);
 }
