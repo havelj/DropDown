@@ -3,6 +3,7 @@ package gamePackage;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
 import java.awt.event.*;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -26,8 +27,8 @@ public class Controller implements KeyListener {
 		view = new View();
 		
 		createJFrame();
-		setViewComponents();
-		//view.updateObjectLocation();
+		updateViewWalls();
+		view.setBall(model.getBall());
 		view.repaint();
 		
 		frame.setVisible(true);
@@ -48,14 +49,6 @@ public class Controller implements KeyListener {
 		frame.addKeyListener(this);								//Tells frame to listen to user's input
 		//adds the necessary JPanel (the view) onto the JFrame instance
 		frame.add(view);
-	}
-	
-	public void setViewComponents() {
-		view.setBall(model.getBall());
-		view.setWallOneLeft(model.getWallFromArr(0));
-		view.setWallOneRight(model.getWallFromArr(1));
-		view.setWallTwoLeft(model.getWallFromArr(2));
-		view.setWallTwoRight(model.getWallFromArr(3));
 	}
 	
 	/**
@@ -119,6 +112,10 @@ public class Controller implements KeyListener {
 			model.getBall().setLocation(model.getBall().getX(), wallAbove.getY() + wallAbove.getHeight());
 		}
 		
+		//Replace a level if it is completely out of view
+		if(model.shouldReplace()) {
+			model.replaceLevel();
+		}
 	}
 	
 	/**
@@ -126,9 +123,17 @@ public class Controller implements KeyListener {
 	 * Calls moveWall() for every wall in the game
 	 */
 	public void moveWalls() {
-		for (int i = 0; i < model.getWallArrSize(); i++) {
-			model.getWalls()[i].moveWall();
+		for (int i = 0; i < model.getWallQueueSize(); i++) {
+			model.getWalls().get(i).moveWall();
 		}
+	}
+	
+	/**
+	 * updateViewWalls()
+	 * Updates the view's copy of the walls
+	 */
+	public void updateViewWalls() {
+		view.updateWalls(model.getWalls());
 	}
 	
 	/**
@@ -139,8 +144,8 @@ public class Controller implements KeyListener {
 	public Wall getWallBelow(Ball ball) {
 		Wall myWall = null;
 		Wall temp;
-		for(int i = 0; i < model.getWalls().length; i++) {
-			temp = model.getWalls()[i];
+		for(int i = 0; i < model.getWallQueueSize(); i++) {
+			temp = model.getWalls().get(i);
 			//If the ball is sitting on top of the wall
 			if((ball.getY() >= (temp.getY() - ball.getSize())) && (ball.getY() <= (temp.getY() + temp.getHeight() - ball.getSize())) && (ball.getX() >= temp.getX() - ball.getSize()) && (ball.getX() <= temp.getX() + temp.getWidth())) {
 				myWall = temp;
@@ -158,8 +163,8 @@ public class Controller implements KeyListener {
 	public Wall getWallAbove(Ball ball) {
 		Wall myWall = null;
 		Wall temp;
-		for(int i = 0; i < model.getWalls().length; i++) {
-			temp = model.getWalls()[i];
+		for(int i = 0; i < model.getWallQueueSize(); i++) {
+			temp = model.getWalls().get(i);
 			//If the ball is hitting the bottom of the wall
 			if((ball.getY() >= (temp.getY() + temp.getHeight()- ball.getSize())) && (ball.getY() <= (temp.getY() + temp.getHeight())) && (ball.getX() >= temp.getX() - ball.getSize()) && (ball.getX() <= temp.getX() + temp.getWidth())) {
 				myWall = temp;
@@ -177,8 +182,8 @@ public class Controller implements KeyListener {
 	public Wall getWallRight(Ball ball) {
 		Wall myWall = null;
 		Wall temp;
-		for(int i = 0; i < model.getWalls().length; i++) {
-			temp = model.getWalls()[i];
+		for(int i = 0; i < model.getWallQueueSize(); i++) {
+			temp = model.getWalls().get(i);
 			//If the ball is hitting the left side of the wall
 			if((ball.getX() >= temp.getX() - ball.getSize()) && (ball.getX() <= temp.getX() - ball.getSize() + ball.horSpeed) && (ball.getY() >= temp.getY() - ball.getSize()) && (ball.getY() <= temp.getY() + temp.getHeight())) {
 				myWall = temp;
@@ -196,8 +201,8 @@ public class Controller implements KeyListener {
 	public Wall getWallLeft(Ball ball) {
 		Wall myWall = null;
 		Wall temp;
-		for(int i = 0; i < model.getWalls().length; i++) {
-			temp = model.getWalls()[i];
+		for(int i = 0; i < model.getWallQueueSize(); i++) {
+			temp = model.getWalls().get(i);
 			//If the ball is hitting the right side of the wall
 			if((ball.getX() >= temp.getX() + temp.getWidth() - ball.horSpeed) && (ball.getX() <= temp.getX() + temp.getWidth()) && (ball.getY() >= temp.getY() - ball.getSize()) && (ball.getY() <= temp.getY() + temp.getHeight())) {
 				myWall = temp;
@@ -218,7 +223,7 @@ public class Controller implements KeyListener {
 			start = System.nanoTime();
 			
 			tick();
-			//view.updateObjectLocation();
+			updateViewWalls();
 			view.repaint();
 			
 			elapsed = System.nanoTime() - start;
@@ -268,6 +273,11 @@ public class Controller implements KeyListener {
 			 */
 			model.getBall().falling = false;
 		} 
+		
+		//Temporary, only for testing purposes
+		if(key == KeyEvent.VK_SPACE) {
+			model.changeDirection();
+		}
 	}
 
 	/**
