@@ -5,9 +5,9 @@ public class Wall extends GameObject {
 	private double yPosition;
 	private double width;
 	private double height;
-	private double wallSpeed = 1.5;
+	private double wallSpeed;
 	
-	public boolean up, down;
+	public boolean up;
 	
 	/**
 	 * Constructor
@@ -17,9 +17,8 @@ public class Wall extends GameObject {
 		this.yPosition = y;
 		this.width = w;
 		this.height = h;
+		this.wallSpeed = 1.5;
 		this.up = true;
-		this.down = false;
-		
 	}
 	
 	/**
@@ -29,8 +28,7 @@ public class Wall extends GameObject {
 	void moveWall() {
 		if (up) {
 			yPosition -= wallSpeed;
-		}
-		if (down) {
+		} else {
 			yPosition += wallSpeed;
 		}
 	}
@@ -41,7 +39,6 @@ public class Wall extends GameObject {
 	 */
 	@Override
 	public double getX() {
-		// TODO Auto-generated method stub
 		return this.xPosition;
 	}
 
@@ -51,7 +48,6 @@ public class Wall extends GameObject {
 	 */
 	@Override
 	public double getY() {
-		// TODO Auto-generated method stub
 		return this.yPosition;
 	}
 
@@ -71,7 +67,6 @@ public class Wall extends GameObject {
 	 */
 	@Override
 	public double getSpeed() {
-		// TODO Auto-generated method stub
 		return wallSpeed;
 	}
 
@@ -81,7 +76,6 @@ public class Wall extends GameObject {
 	 */
 	@Override
 	public void setSpeed(double s) {
-		// TODO Auto-generated method stub
 		wallSpeed = s;
 	}
 	

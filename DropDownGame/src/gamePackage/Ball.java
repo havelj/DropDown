@@ -1,7 +1,5 @@
 package gamePackage;
 
-import java.awt.event.KeyEvent;
-
 public class Ball extends GameObject {
 	private double xPosition;
 	private double yPosition;
@@ -80,7 +78,7 @@ public class Ball extends GameObject {
 		}
 		/*if (yPosition <= 0) {
 			yPosition = 0;
-		} */
+		}*/
 		
 		if (yPosition + ballDiameter >= 500) {
 			yPosition = 500 - ballDiameter;
@@ -103,7 +101,6 @@ public class Ball extends GameObject {
 	 */
 	@Override
 	public double getX() {
-//		System.out.println(xPosition);
 		return this.xPosition;
 	}
 
@@ -114,7 +111,6 @@ public class Ball extends GameObject {
 	 */
 	@Override
 	public double getY() {
-		//System.out.println(yPosition);
 		return this.yPosition;
 	}
 	

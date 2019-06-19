@@ -1,23 +1,17 @@
 package gamePackage;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
 import java.awt.event.*;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.KeyStroke;
+
 
 public class Controller implements KeyListener {
+	private final int FPS = 60;
+	private final long targetTime = 1000 / FPS;
 	private JFrame frame;
 	Model model;
 	View view;
-	private final int FPS = 60;
-	private final long targetTime = 1000 / FPS;
 	
 	/**
 	 * Default constructor; calls the Initial User Interface
@@ -265,12 +259,6 @@ public class Controller implements KeyListener {
 		}
 		if(key == KeyEvent.VK_UP || key == KeyEvent.VK_W) { 
 			model.getBall().jumping = true;
-			
-			/* 
-			 * This allows the ball to jump while it's falling.
-			 * We don't want this feature in the final game.
-			 * Testing purposes only!
-			 */
 			model.getBall().falling = false;
 		} 
 		

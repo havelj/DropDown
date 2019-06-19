@@ -1,30 +1,41 @@
 package gamePackage;
 
 import java.util.Random;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Model {
 	public final static int GAME_HEIGHT = 500;
 	public final static int GAME_WIDTH = 500;
-	private Ball ball;
 	
-	//wall attributes to fill array of wall objects
-	private int wallInterval = 70; //was 70
-	private int wallGap = 60;
-	private int wallHeight = 30; //was 30
-	Random rand = new Random();
-	private int randWallWidth = rand.nextInt(GAME_WIDTH - 40);
-	private int wallStartingY = 275;
-	private int wallCount = 14; //Twice the amount of levels on the screen at a time (change to 4 when fixing direction bug)
+	private Ball ball;	
+
+	private int wallInterval;
+	private int wallGap;
+	private int wallHeight;
+	private int wallStartingY;
+	private int wallCount; //Twice the amount of levels on the screen at a time
 	
-	private LinkedList<Wall> wallQueue = new LinkedList<Wall>();	
+	private LinkedList<Wall> wallQueue;	
+	
+	Random rand;
+	private int randWallWidth;
 	
 	/**
 	 * Default constructor; method call to initialize beginning data of the game.
 	 */
 	public Model(Ball b) {
 		ball = b;
+		
+		wallQueue = new LinkedList<Wall>();
+		
+		wallInterval = 70;
+		wallGap = 60;
+		wallHeight = 30;
+		wallStartingY = 275;
+		wallCount = 14;
+		
+		rand = new Random();
+		randWallWidth = rand.nextInt(GAME_WIDTH - 40);
 		
 		fillWallQueue();
 	}
@@ -80,7 +91,9 @@ public class Model {
 			
 			//Create new walls with random gap
 			left = new Wall(0, -wallHeight, randWallWidth, wallHeight);
+			left.up = false;
 			right = new Wall(left.getWidth() + wallGap, -wallHeight, GAME_WIDTH - left.getWidth(), wallHeight);
+			right.up = false;
 			
 			wallQueue.addFirst(right);
 			wallQueue.addFirst(left);
@@ -92,10 +105,8 @@ public class Model {
 		for(int i = 0; i < wallQueue.size(); i++) {
 			if(wallQueue.get(i).up) {
 				wallQueue.get(i).up = false;
-				wallQueue.get(i).down = true;
 			} else {
 				wallQueue.get(i).up = true;
-				wallQueue.get(i).down = false;
 			}
 		}
 	}
