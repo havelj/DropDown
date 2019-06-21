@@ -9,7 +9,7 @@ public class Model {
 	
 	private Ball ball;	
 
-	private int wallInterval;
+	private double wallInterval;
 	private int wallGap;
 	private int wallHeight;
 	private int wallStartingY;
@@ -28,7 +28,6 @@ public class Model {
 		
 		wallQueue = new LinkedList<Wall>();
 		
-		wallInterval = 70;
 		wallGap = 60;
 		wallHeight = 30;
 		wallStartingY = 275;
@@ -38,9 +37,11 @@ public class Model {
 		randWallWidth = rand.nextInt(GAME_WIDTH - 40);
 		
 		fillWallQueue();
+		//fillWalls();
 	}
 		
 	public void fillWallQueue() { //Will need to alter wallHeight if we want 8 layers (16 walls) on screen
+		setWallInterval();
 		for (int i = 0; i < wallCount; i++) {
 			//if it is a wall on the left
 			if (i%2 == 0) {
@@ -55,13 +56,29 @@ public class Model {
 		}
 	}
 	
+	public void setWallInterval() {
+		double interval, subInterval;
+		int levelCount;
+		levelCount = wallCount / 2;
+		
+		//Compute wall interval based on # of levels, wall height and jpanel height
+		subInterval = (GAME_HEIGHT - ((double) levelCount * wallHeight)) / (levelCount - 1);
+	
+		//Distance between two consecutive rectangles (top-right corner)
+		interval = wallHeight + subInterval;
+		
+		this.wallInterval = interval;		
+	}
+	
 	public boolean shouldReplace() {
 		boolean result = false;
 		boolean up = wallQueue.getFirst().up;
+		double subInterval = wallInterval - wallHeight;
+		
 		for(int i = 0; i < wallQueue.size(); i++) {
-			if(up && (i%2 == 0) && (wallQueue.getFirst().getY() <= -wallHeight)) {
+			if(up && (i%2 == 0) && (wallQueue.getFirst().getY() <= -subInterval)) {
 				result = true;
-			} else if(!up && (i%2 == 0) && (wallQueue.getLast().getY() >= GAME_HEIGHT)) {
+			} else if(!up && (i%2 == 0) && (wallQueue.getLast().getY() >= (GAME_HEIGHT + (subInterval - wallHeight)))) {
 				result = true;
 			}
 		}
